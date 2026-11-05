@@ -1,0 +1,49 @@
+.my-contributions {
+  max-width: 900px;
+  margin: 50px auto;
+  padding: 20px;
+}
+
+.my-contributions h2 {
+  color: #285c3b;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.contribution-list {
+  display: grid;
+  gap: 20px;
+}
+
+.contribution-card {
+  background: white;
+  padding: 22px;
+  border-radius: 10px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+}
+
+.contribution-card h3 {
+  color: #285c3b;
+  margin-bottom: 15px;
+}
+
+.contribution-card p {
+  margin: 10px 0;
+  color: #444;
+}
+
+.status {
+  font-weight: bold;
+}
+
+.status.pending {
+  color: #c58a17;
+}
+
+.status.approved {
+  color: #26834a;
+}
+
+.status.rejected {
+  color: #c0392b;
+}

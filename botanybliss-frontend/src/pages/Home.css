@@ -1,0 +1,79 @@
+.home {
+  min-height: 85vh;
+}
+
+.hero {
+  min-height: 550px;
+  display: flex;
+  align-items: center;
+  padding: 60px 8%;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(15, 45, 27, 0.85),
+      rgba(15, 45, 27, 0.35)
+    ),
+    url("https://images.unsplash.com/photo-1416879595882-3373a0480b5b")
+    center/cover no-repeat;
+}
+
+.hero-content {
+  max-width: 650px;
+  color: white;
+}
+
+.hero-label {
+  color: #c6e5b5;
+  letter-spacing: 3px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.hero h1 {
+  font-size: 54px;
+  line-height: 1.15;
+  margin: 20px 0;
+}
+
+.hero-description {
+  font-size: 17px;
+  line-height: 1.7;
+  max-width: 520px;
+  color: #eeeeee;
+}
+
+.search-form {
+  display: flex;
+  background: white;
+  padding: 7px;
+  border-radius: 8px;
+  margin-top: 30px;
+  max-width: 500px;
+}
+
+.search-form input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 12px;
+  font-size: 15px;
+}
+
+.search-form button {
+  border: none;
+  background: #397a4b;
+  color: white;
+  padding: 12px 22px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .hero h1 {
+    font-size: 38px;
+  }
+
+  .hero {
+    padding: 40px 6%;
+  }
+}

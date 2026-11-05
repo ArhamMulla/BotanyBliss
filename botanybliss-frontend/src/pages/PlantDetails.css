@@ -1,0 +1,77 @@
+.plant-details-page {
+  padding: 40px 8%;
+  min-height: 100vh;
+  background: #f8faf6;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 30px;
+  color: #285c3b;
+  text-decoration: none;
+}
+
+.plant-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+}
+
+.details-image img,
+.details-image .plant-image-placeholder {
+  width: 100%;
+  height: 450px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.plant-details h1 {
+  color: #285c3b;
+  font-size: 36px;
+}
+
+.scientific-name {
+  font-style: italic;
+  color: #888;
+}
+
+.plant-description {
+  line-height: 1.7;
+  color: #555;
+  margin: 25px 0;
+}
+
+.care-details {
+  margin-top: 30px;
+}
+
+.care-details h2 {
+  color: #285c3b;
+}
+
+.care-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.care-item h3 {
+  margin-bottom: 5px;
+  color: #416c4c;
+}
+
+.care-item p {
+  color: #666;
+}
+
+@media (max-width: 750px) {
+  .plant-details {
+    grid-template-columns: 1fr;
+  }
+
+  .details-image img {
+    height: 300px;
+  }
+}

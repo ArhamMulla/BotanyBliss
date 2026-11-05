@@ -1,0 +1,120 @@
+.manage-plants {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 25px;
+}
+
+.manage-plants h2 {
+  color: #285c3b;
+  margin-bottom: 25px;
+}
+
+.plant-form {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 35px;
+}
+
+.plant-form h3 {
+  color: #285c3b;
+  margin-bottom: 10px;
+}
+
+.plant-form label {
+  font-weight: 600;
+  color: #444;
+}
+
+.plant-form input,
+.plant-form textarea {
+  padding: 12px;
+  border: 1px solid #d5ddd6;
+  border-radius: 6px;
+  font-size: 15px;
+  font-family: inherit;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.plant-form textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.form-actions,
+.plant-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.form-actions button,
+.plant-actions button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  background: #398653;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.form-actions .cancel-btn {
+  background: #777;
+}
+
+.plant-actions .delete-btn {
+  background: #c0392b;
+}
+
+.success-message {
+  color: #26834a;
+  margin-bottom: 15px;
+}
+
+.error-message {
+  color: #c0392b;
+  margin-bottom: 15px;
+}
+
+.managed-plant-list {
+  display: grid;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.managed-plant-card {
+  background: white;
+  padding: 20px;
+  border-radius: 9px;
+  box-shadow: 0 2px 9px rgba(0, 0, 0, 0.07);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+.managed-plant-card h4 {
+  color: #285c3b;
+  margin-bottom: 5px;
+}
+
+.managed-plant-card p {
+  color: #777;
+}
+
+@media (max-width: 600px) {
+  .manage-plants {
+    padding: 15px;
+  }
+
+  .managed-plant-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

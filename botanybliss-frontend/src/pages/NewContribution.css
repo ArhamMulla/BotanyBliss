@@ -1,0 +1,80 @@
+.contribution-page {
+  max-width: 750px;
+  margin: 50px auto;
+  padding: 35px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+}
+
+.contribution-page h2 {
+  text-align: center;
+  color: #285c3b;
+  margin-bottom: 30px;
+}
+
+.contribution-page form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.contribution-page label {
+  font-weight: 600;
+  color: #333;
+  margin-top: 8px;
+}
+
+.contribution-page input,
+.contribution-page select,
+.contribution-page textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d5ddd6;
+  border-radius: 6px;
+  font-size: 15px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.contribution-page input:focus,
+.contribution-page select:focus,
+.contribution-page textarea:focus {
+  outline: none;
+  border-color: #398653;
+  box-shadow: 0 0 0 2px rgba(57, 134, 83, 0.12);
+}
+
+.contribution-page textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.contribution-page button {
+  margin-top: 20px;
+  padding: 13px;
+  background: #398653;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.contribution-page button:hover {
+  background: #286b40;
+}
+
+.contribution-page p {
+  margin-top: 18px;
+  text-align: center;
+  font-weight: 500;
+}
+
+@media (max-width: 600px) {
+  .contribution-page {
+    margin: 25px 15px;
+    padding: 22px;
+  }
+}
