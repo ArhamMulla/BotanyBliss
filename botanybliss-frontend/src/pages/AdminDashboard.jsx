@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import {
   getPendingContributions,
@@ -7,6 +8,7 @@ import "./AdminDashboard.css";
 
 function AdminDashboard() {
   const [contributions, setContributions] = useState([]);
+  const [remarks, setRemarks] = useState({});
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
@@ -27,29 +29,20 @@ function AdminDashboard() {
     setError("");
     setMessage("");
 
-    let remarks = "";
-
-    if (action === "reject") {
-      remarks = window.prompt("Enter rejection remarks:");
-
-      if (remarks === null) return;
-
-      if (!remarks.trim()) {
-        setError("Please provide a reason for rejection.");
-        return;
-      }
-    } else {
-      if (!window.confirm("Are you sure you want to approve this contribution?")) {
-        return;
-      }
-    }
-
     try {
-      await reviewContribution(id, action, remarks);
+      await reviewContribution(id, action, remarks[id] || "");
+
       setMessage(`Contribution ${action}d successfully.`);
+
       setContributions((previous) =>
         previous.filter((item) => item.id !== id)
       );
+
+      setRemarks((previous) => {
+        const updated = { ...previous };
+        delete updated[id];
+        return updated;
+      });
     } catch (err) {
       setError(
         err.response?.data?.error || `Unable to ${action} contribution.`
@@ -81,7 +74,29 @@ function AdminDashboard() {
             <p><strong>Sunlight:</strong> {item.sunlight || "N/A"}</p>
             <p><strong>Watering:</strong> {item.watering || "N/A"}</p>
             <p><strong>Soil:</strong> {item.soilType || "N/A"}</p>
-            <p><strong>Image URL:</strong> {item.imageUrl || "N/A"}</p>
+
+            {item.imageUrl && (
+              <div>
+                <strong>Contribution Image:</strong>
+                <img
+                  src={item.imageUrl}
+                  alt={item.commonName || "Plant contribution"}
+                  className="contribution-image"
+                />
+              </div>
+            )}
+
+            <label>Admin Remarks</label>
+            <textarea
+              value={remarks[item.id] || ""}
+              onChange={(e) =>
+                setRemarks((previous) => ({
+                  ...previous,
+                  [item.id]: e.target.value,
+                }))
+              }
+              placeholder="Enter remarks (optional for approval, required for rejection)"
+            />
 
             <div className="admin-actions">
               <button
@@ -93,7 +108,13 @@ function AdminDashboard() {
 
               <button
                 className="reject-btn"
-                onClick={() => handleReview(item.id, "reject")}
+                onClick={() => {
+                  if (!remarks[item.id]?.trim()) {
+                    setError("Please provide a reason for rejection.");
+                    return;
+                  }
+                  handleReview(item.id, "reject");
+                }}
               >
                 Reject
               </button>

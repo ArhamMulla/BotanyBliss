@@ -53,11 +53,18 @@ function MyContributions() {
                 </span>
               </p>
 
-              {item.adminRemarks && (
-                <p>
-                  <strong>Admin Remarks:</strong> {item.adminRemarks}
-                </p>
-              )}
+              
+<div className="admin-remarks">
+  <strong>Admin Remarks:</strong>
+  {item.adminRemarks?.trim() ? (
+    <p>{item.adminRemarks}</p>
+  ) : item.status === "PENDING" ? (
+    <p>Not reviewed yet.</p>
+  ) : (
+    <p>No remarks provided.</p>
+  )}
+</div>
+
 
               <p>
                 <strong>Submitted:</strong>{" "}

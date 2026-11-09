@@ -89,3 +89,22 @@
   color: #c0392b;
   margin-bottom: 15px;
 }
+
+.contribution-image {
+  display: block;
+  width: 180px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin: 10px 0;
+}
+
+.admin-card textarea {
+  display: block;
+  width: 100%;
+  min-height: 80px;
+  margin: 8px 0 16px;
+  padding: 10px;
+  resize: vertical;
+  box-sizing: border-box;
+}

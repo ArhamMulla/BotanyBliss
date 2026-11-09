@@ -1,3 +1,4 @@
+
 import { Link, useNavigate } from "react-router-dom";
 import "./Navbar.css";
 
@@ -23,8 +24,18 @@ function Navbar() {
 
         {user ? (
           <>
-            <Link to="/contributions/new">Submit Contribution</Link>
-            <Link to="/contributions/my">My Contributions</Link>
+            {user.role === "ADMIN" ? (
+              <>
+                <Link to="/admin">Admin Dashboard</Link>
+                <Link to="/admin/plants">Manage Plants</Link>
+              </>
+            ) : (
+              <>
+                <Link to="/contributions/new">Submit Contribution</Link>
+                <Link to="/contributions/my">My Contributions</Link>
+              </>
+            )}
+
             <span>Hi, {user.name}</span>
             <button onClick={handleLogout}>Logout</button>
           </>
@@ -34,13 +45,6 @@ function Navbar() {
             <Link to="/register" className="register-btn">Sign Up</Link>
           </>
         )}
-
-        {user?.role === "ADMIN" && (
-  <>
-    <Link to="/admin">Admin Dashboard</Link>
-    <Link to="/admin/plants">Manage Plants</Link>
-  </>
-)}
       </div>
     </nav>
   );

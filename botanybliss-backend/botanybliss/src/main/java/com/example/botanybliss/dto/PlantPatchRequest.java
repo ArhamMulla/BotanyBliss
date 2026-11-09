@@ -9,10 +9,8 @@ public class PlantPatchRequest {
 
     private String commonName;
     private String scientificName;
-
     private String description;
     private String sunlight;
     private String watering;
     private String soilType;
-    private String imageUrl;
 }

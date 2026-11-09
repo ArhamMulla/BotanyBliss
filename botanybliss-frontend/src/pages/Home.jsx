@@ -1,14 +1,17 @@
 import { useState } from "react";
 import "./Home.css";
 import FeaturedPlants from "../components/FeaturedPlants";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
   const [search, setSearch] = useState("");
+  const navigate = useNavigate();
 
   const handleSearch = (e) => {
-    e.preventDefault();
-    console.log("Searching for:", search);
-  };
+  e.preventDefault();
+
+  navigate(`/plants?search=${encodeURIComponent(search.trim())}`);
+};
 
   return (
     <div className="home">

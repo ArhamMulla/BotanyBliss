@@ -18,5 +18,4 @@ public class PlantRequest {
     private String sunlight;
     private String watering;
     private String soilType;
-    private String imageUrl;
 }

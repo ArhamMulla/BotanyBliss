@@ -4,7 +4,10 @@ import com.example.botanybliss.dto.PlantPatchRequest;
 import com.example.botanybliss.dto.PlantResponse;
 import com.example.botanybliss.entity.Plant;
 import com.example.botanybliss.repository.PlantRepository;
+import com.example.botanybliss.storage.StorageService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,11 +16,18 @@ import java.util.Optional;
 public class PlantService {
 
     private final PlantRepository plantRepository;
+    private final StorageService storageService;
 
-    public PlantService(PlantRepository plantRepository) {
+    @Value("${storage.base-url}")
+    private String imageBaseUrl;
+
+    public PlantService(
+            PlantRepository plantRepository,
+            StorageService storageService) {
+
         this.plantRepository = plantRepository;
+        this.storageService = storageService;
     }
-
     public Plant savePlant(Plant plant) {
         return plantRepository.save(plant);
     }
@@ -34,7 +44,20 @@ public class PlantService {
         plantRepository.deleteById(id);
     }
 
-    public Optional<Plant> updatePlant(Long id, PlantPatchRequest updates) {
+    public Plant createPlant(Plant plant, MultipartFile image) {
+
+        if (image != null && !image.isEmpty()) {
+            String fileName = storageService.store(image);
+            plant.setImageUrl(fileName);
+        }
+
+        return plantRepository.save(plant);
+    }
+
+    public Optional<Plant> updatePlant(
+            Long id,
+            PlantPatchRequest updates,
+            MultipartFile image) {
 
         return plantRepository.findById(id)
                 .map(existingPlant -> {
@@ -57,8 +80,20 @@ public class PlantService {
                     if (updates.getSoilType() != null)
                         existingPlant.setSoilType(updates.getSoilType());
 
-                    if (updates.getImageUrl() != null)
-                        existingPlant.setImageUrl(updates.getImageUrl());
+                    if (image != null && !image.isEmpty()) {
+
+                        String oldImage = existingPlant.getImageUrl();
+
+                        String newImage = storageService.store(image);
+                        existingPlant.setImageUrl(newImage);
+
+                        if (oldImage != null
+                                && !oldImage.isBlank()
+                                && !oldImage.startsWith("http://")
+                                && !oldImage.startsWith("https://")) {
+                            storageService.delete(oldImage);
+                        }
+                    }
 
                     return plantRepository.save(existingPlant);
                 });
@@ -75,7 +110,15 @@ public class PlantService {
         response.setSunlight(plant.getSunlight());
         response.setWatering(plant.getWatering());
         response.setSoilType(plant.getSoilType());
-        response.setImageUrl(plant.getImageUrl());
+
+        String image = plant.getImageUrl();
+        if (image == null || image.isBlank()) {
+            response.setImageUrl(null);
+        } else if (image.startsWith("http://") || image.startsWith("https://")) {
+            response.setImageUrl(image);
+        } else {
+            response.setImageUrl(imageBaseUrl + image);
+        }
 
         return response;
     }

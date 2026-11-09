@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { getAllPlants } from "../services/plantService";
 import "./Plants.css";
 
 function Plants() {
   const [plants, setPlants] = useState([]);
-  const [search, setSearch] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+const [search, setSearch] = useState(searchParams.get("search") || "");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -23,6 +24,10 @@ function Plants() {
 
     fetchPlants();
   }, []);
+
+  useEffect(() => {
+  setSearch(searchParams.get("search") || "");
+}, [searchParams]);
 
   const filteredPlants = plants.filter((plant) =>
     plant.commonName.toLowerCase().includes(search.toLowerCase()) ||

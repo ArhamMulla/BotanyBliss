@@ -1,7 +1,7 @@
+
 package com.example.botanybliss.dto;
 
 import com.example.botanybliss.entity.ContributionType;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -28,5 +28,4 @@ public class PlantContributionRequest {
     private String sunlight;
     private String watering;
     private String soilType;
-    private String imageUrl;
 }

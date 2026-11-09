@@ -1,9 +1,18 @@
+
 import axiosInstance from "./axiosInstance";
 
 export const submitContribution = async (contributionData) => {
+  const formData = new FormData();
+
+  Object.entries(contributionData).forEach(([key, value]) => {
+    if (value !== null && value !== undefined && value !== "") {
+      formData.append(key, value);
+    }
+  });
+
   const response = await axiosInstance.post(
     "/contributions",
-    contributionData
+    formData
   );
 
   return response.data;
@@ -22,8 +31,7 @@ export const getPendingContributions = async () => {
 export const reviewContribution = async (id, action, remarks) => {
   const response = await axiosInstance.post(
     `/contributions/${id}/${action}`,
-    { remarks }
+    { adminRemarks: remarks }
   );
-
   return response.data;
 };

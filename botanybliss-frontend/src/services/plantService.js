@@ -11,12 +11,32 @@ export const getPlantById = async (id) => {
 };
 
 export const createPlant = async (plantData) => {
-  const response = await axiosInstance.post("/plants", plantData);
+  const formData = new FormData();
+
+  Object.entries(plantData).forEach(([key, value]) => {
+    if (value !== null && value !== undefined && value !== "") {
+      formData.append(key, value);
+    }
+  });
+
+  const response = await axiosInstance.post("/plants", formData);
   return response.data;
 };
 
 export const updatePlant = async (id, plantData) => {
-  const response = await axiosInstance.patch(`/plants/${id}`, plantData);
+  const formData = new FormData();
+
+  Object.entries(plantData).forEach(([key, value]) => {
+    if (value !== null && value !== undefined && value !== "") {
+      formData.append(key, value);
+    }
+  });
+
+  const response = await axiosInstance.patch(
+    `/plants/${id}`,
+    formData
+  );
+
   return response.data;
 };
 

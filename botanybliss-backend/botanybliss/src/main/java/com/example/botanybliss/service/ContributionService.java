@@ -6,8 +6,11 @@ import com.example.botanybliss.entity.*;
 import com.example.botanybliss.repository.PlantContributionRepository;
 import com.example.botanybliss.repository.PlantRepository;
 import com.example.botanybliss.repository.UserRepository;
+import com.example.botanybliss.storage.StorageService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -17,18 +20,27 @@ public class ContributionService {
     private final PlantContributionRepository contributionRepository;
     private final PlantRepository plantRepository;
     private final UserRepository userRepository;
+    private final StorageService storageService;
+
+    @Value("${storage.base-url}")
+    private String imageBaseUrl;
 
     public ContributionService(
             PlantContributionRepository contributionRepository,
             PlantRepository plantRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository,
+            StorageService storageService) {
         this.contributionRepository = contributionRepository;
         this.plantRepository = plantRepository;
         this.userRepository = userRepository;
+        this.storageService= storageService;
     }
 
+
     public PlantContributionResponse submitContribution(
-            PlantContributionRequest request, String email) {
+            PlantContributionRequest request,
+            MultipartFile image,
+            String email) {
 
         if (request.getContributionType() == null) {
             throw new IllegalArgumentException("Contribution type is required");
@@ -61,7 +73,8 @@ public class ContributionService {
 
             contribution.setPlant(plant);
 
-            if (!hasAnyPlantDetails(request)) {
+            if (!hasAnyPlantDetails(request)
+                    && (image == null || image.isEmpty())) {
                 throw new IllegalArgumentException("At least one field must be provided");
             }
         }
@@ -72,10 +85,15 @@ public class ContributionService {
         contribution.setSunlight(request.getSunlight());
         contribution.setWatering(request.getWatering());
         contribution.setSoilType(request.getSoilType());
-        contribution.setImageUrl(request.getImageUrl());
+
+        if (image != null && !image.isEmpty()) {
+            String fileName = storageService.store(image);
+            contribution.setImageUrl(fileName);
+        }
 
         return mapToResponse(contributionRepository.save(contribution));
     }
+
 
     public List<PlantContributionResponse> getUserContributions(String email) {
 
@@ -99,8 +117,7 @@ public class ContributionService {
                 || hasText(request.getDescription())
                 || hasText(request.getSunlight())
                 || hasText(request.getWatering())
-                || hasText(request.getSoilType())
-                || hasText(request.getImageUrl());
+                || hasText(request.getSoilType());
     }
 
     public List<PlantContributionResponse> getPendingContributions() {
@@ -222,7 +239,15 @@ public class ContributionService {
         response.setSunlight(contribution.getSunlight());
         response.setWatering(contribution.getWatering());
         response.setSoilType(contribution.getSoilType());
-        response.setImageUrl(contribution.getImageUrl());
+        String image = contribution.getImageUrl();
+
+        if (image == null || image.isBlank()) {
+            response.setImageUrl(null);
+        } else if (image.startsWith("http://") || image.startsWith("https://")) {
+            response.setImageUrl(image);
+        } else {
+            response.setImageUrl(imageBaseUrl + image);
+        }
 
         response.setAdminRemarks(contribution.getAdminRemarks());
 

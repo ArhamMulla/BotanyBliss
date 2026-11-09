@@ -5,10 +5,15 @@ import com.example.botanybliss.dto.PlantRequest;
 import com.example.botanybliss.dto.PlantResponse;
 import com.example.botanybliss.entity.Plant;
 import com.example.botanybliss.service.PlantService;
+import com.example.botanybliss.storage.StorageService;
 import jakarta.validation.Valid;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.MediaTypeFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -18,15 +23,21 @@ import java.util.List;
 public class PlantController {
 
     private final PlantService plantService;
+    private final StorageService storageService;
 
-    public PlantController(PlantService plantService) {
+    public PlantController(
+            PlantService plantService,
+            StorageService storageService) {
+
         this.plantService = plantService;
+        this.storageService = storageService;
     }
 
     // Add a plant
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PlantResponse> addPlant(
-            @Valid @RequestBody PlantRequest request) {
+            @Valid @ModelAttribute PlantRequest request,
+            @RequestParam(value = "image", required = false) MultipartFile image) {
 
         Plant plant = new Plant();
         plant.setCommonName(request.getCommonName());
@@ -35,9 +46,8 @@ public class PlantController {
         plant.setSunlight(request.getSunlight());
         plant.setWatering(request.getWatering());
         plant.setSoilType(request.getSoilType());
-        plant.setImageUrl(request.getImageUrl());
 
-        Plant savedPlant = plantService.savePlant(plant);
+        Plant savedPlant = plantService.createPlant(plant, image);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(plantService.mapToResponse(savedPlant));
@@ -71,14 +81,30 @@ public class PlantController {
     }
 
     // Update plant
-    @PatchMapping("/{id}")
+    @PatchMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PlantResponse> updatePlant(
             @PathVariable Long id,
-            @Valid @RequestBody PlantPatchRequest request) {
+            @ModelAttribute PlantPatchRequest request,
+            @RequestParam(value = "image", required = false) MultipartFile image) {
 
-        return plantService.updatePlant(id, request)
+        return plantService.updatePlant(id, request, image)
                 .map(plantService::mapToResponse)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/images/{fileName:.+}")
+    public ResponseEntity<Resource> getImage(
+            @PathVariable String fileName) {
+
+        Resource image = storageService.load(fileName);
+
+        MediaType contentType = MediaTypeFactory
+                .getMediaType(image)
+                .orElse(MediaType.APPLICATION_OCTET_STREAM);
+
+        return ResponseEntity.ok()
+                .contentType(contentType)
+                .body(image);
     }
 }

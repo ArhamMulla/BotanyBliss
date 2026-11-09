@@ -1,21 +1,25 @@
+
 import { useEffect, useState } from "react";
 import { getAllPlants } from "../services/plantService";
 import { submitContribution } from "../services/contributionService";
 import "./NewContribution.css";
 
+const emptyForm = {
+  commonName: "",
+  scientificName: "",
+  description: "",
+  sunlight: "",
+  watering: "",
+  soilType: "",
+  image: null,
+};
+
 function NewContribution() {
   const [type, setType] = useState("NEW_PLANT");
   const [plants, setPlants] = useState([]);
   const [plantId, setPlantId] = useState("");
-  const [formData, setFormData] = useState({
-    commonName: "",
-    scientificName: "",
-    description: "",
-    sunlight: "",
-    watering: "",
-    soilType: "",
-    imageUrl: "",
-  });
+  const [formData, setFormData] = useState(emptyForm);
+  const [fileInputKey, setFileInputKey] = useState(0);
 
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -33,6 +37,13 @@ function NewContribution() {
     });
   };
 
+  const handleImageChange = (e) => {
+    setFormData({
+      ...formData,
+      image: e.target.files[0] || null,
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
@@ -46,17 +57,11 @@ function NewContribution() {
 
     try {
       await submitContribution(contributionData);
+
       setMessage("Contribution submitted successfully!");
       setPlantId("");
-      setFormData({
-        commonName: "",
-        scientificName: "",
-        description: "",
-        sunlight: "",
-        watering: "",
-        soilType: "",
-        imageUrl: "",
-      });
+      setFormData(emptyForm);
+      setFileInputKey((key) => key + 1);
     } catch (err) {
       setError(
         err.response?.data?.error || "Unable to submit contribution."
@@ -77,6 +82,7 @@ function NewContribution() {
             setType(e.target.value);
             setMessage("");
             setError("");
+            setPlantId("");
           }}
         >
           <option value="NEW_PLANT">Add a New Plant</option>
@@ -149,11 +155,13 @@ function NewContribution() {
           onChange={handleChange}
         />
 
-        <label>Image URL</label>
+        <label>Plant Image</label>
         <input
-          name="imageUrl"
-          value={formData.imageUrl}
-          onChange={handleChange}
+          key={fileInputKey}
+          type="file"
+          name="image"
+          accept="image/jpeg,image/png,image/webp"
+          onChange={handleImageChange}
         />
 
         <button type="submit">Submit Contribution</button>

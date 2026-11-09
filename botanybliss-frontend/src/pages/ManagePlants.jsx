@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import {
   getAllPlants,
@@ -14,13 +15,15 @@ const emptyForm = {
   sunlight: "",
   watering: "",
   soilType: "",
-  imageUrl: "",
+  image: null,
 };
 
 function ManagePlants() {
   const [plants, setPlants] = useState([]);
   const [formData, setFormData] = useState(emptyForm);
   const [editingId, setEditingId] = useState(null);
+  const [existingImage, setExistingImage] = useState("");
+  const [fileInputKey, setFileInputKey] = useState(0);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
@@ -44,6 +47,20 @@ function ManagePlants() {
     });
   };
 
+  const handleImageChange = (e) => {
+    setFormData({
+      ...formData,
+      image: e.target.files[0] || null,
+    });
+  };
+
+  const resetForm = () => {
+    setFormData(emptyForm);
+    setEditingId(null);
+    setExistingImage("");
+    setFileInputKey((prev) => prev + 1);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
@@ -58,8 +75,7 @@ function ManagePlants() {
         setMessage("Plant added successfully.");
       }
 
-      setFormData(emptyForm);
-      setEditingId(null);
+      resetForm();
       await loadPlants();
     } catch (err) {
       setError(
@@ -70,6 +86,8 @@ function ManagePlants() {
 
   const handleEdit = (plant) => {
     setEditingId(plant.id);
+    setExistingImage(plant.imageUrl || "");
+
     setFormData({
       commonName: plant.commonName || "",
       scientificName: plant.scientificName || "",
@@ -77,8 +95,10 @@ function ManagePlants() {
       sunlight: plant.sunlight || "",
       watering: plant.watering || "",
       soilType: plant.soilType || "",
-      imageUrl: plant.imageUrl || "",
+      image: null,
     });
+
+    setFileInputKey((prev) => prev + 1);
 
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -103,8 +123,7 @@ function ManagePlants() {
   };
 
   const handleCancel = () => {
-    setEditingId(null);
-    setFormData(emptyForm);
+    resetForm();
     setError("");
     setMessage("");
   };
@@ -160,11 +179,24 @@ function ManagePlants() {
           onChange={handleChange}
         />
 
-        <label>Image URL</label>
+        {existingImage && (
+          <div>
+            <label>Current Image</label>
+            <img
+              src={existingImage}
+              alt="Current plant"
+              style={{ width: "120px", display: "block", margin: "10px 0" }}
+            />
+          </div>
+        )}
+
+        <label>Upload Image</label>
         <input
-          name="imageUrl"
-          value={formData.imageUrl}
-          onChange={handleChange}
+          key={fileInputKey}
+          type="file"
+          name="image"
+          accept="image/jpeg,image/png,image/webp"
+          onChange={handleImageChange}
         />
 
         <div className="form-actions">
@@ -173,7 +205,11 @@ function ManagePlants() {
           </button>
 
           {editingId && (
-            <button type="button" className="cancel-btn" onClick={handleCancel}>
+            <button
+              type="button"
+              className="cancel-btn"
+              onClick={handleCancel}
+            >
               Cancel
             </button>
           )}

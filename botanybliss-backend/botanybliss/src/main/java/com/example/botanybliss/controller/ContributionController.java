@@ -7,8 +7,10 @@ import com.example.botanybliss.entity.PlantContribution;
 import com.example.botanybliss.service.ContributionService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -22,15 +24,18 @@ public class ContributionController {
         this.contributionService = contributionService;
     }
 
-    @PostMapping
+
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public PlantContributionResponse submitContribution(
-            @Valid @RequestBody PlantContributionRequest request,
+            @Valid @ModelAttribute PlantContributionRequest request,
+            @RequestParam(value = "image", required = false) MultipartFile image,
             Authentication authentication) {
 
         return contributionService.submitContribution(
-                request, authentication.getName());
+                request, image, authentication.getName());
     }
+
 
     @GetMapping("/pending")
     public List<PlantContributionResponse> getPendingContributions() {
