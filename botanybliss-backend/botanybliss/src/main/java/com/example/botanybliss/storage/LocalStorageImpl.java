@@ -1,6 +1,7 @@
 package com.example.botanybliss.storage;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -13,14 +14,21 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 @Service
+@Profile("!s3")
 public class LocalStorageImpl implements StorageService {
 
     private final Path storageLocation;
+    private final String baseUrl;
 
-    public LocalStorageImpl(@Value("${storage.location}") String location) {
+    public LocalStorageImpl(
+            @Value("${storage.location}") String location,
+            @Value("${storage.base-url}") String baseUrl) {
+
         this.storageLocation = Paths.get(location)
                 .toAbsolutePath()
                 .normalize();
+
+        this.baseUrl = baseUrl;
 
         try {
             Files.createDirectories(this.storageLocation);
@@ -97,5 +105,10 @@ public class LocalStorageImpl implements StorageService {
         } catch (IOException e) {
             throw new RuntimeException("Could not load image", e);
         }
+    }
+
+    @Override
+    public String getUrl(String fileName) {
+        return baseUrl + fileName;
     }
 }

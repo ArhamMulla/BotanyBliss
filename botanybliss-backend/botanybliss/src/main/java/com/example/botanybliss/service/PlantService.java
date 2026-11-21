@@ -112,12 +112,13 @@ public class PlantService {
         response.setSoilType(plant.getSoilType());
 
         String image = plant.getImageUrl();
+
         if (image == null || image.isBlank()) {
             response.setImageUrl(null);
         } else if (image.startsWith("http://") || image.startsWith("https://")) {
             response.setImageUrl(image);
         } else {
-            response.setImageUrl(imageBaseUrl + image);
+            response.setImageUrl(storageService.getUrl(image));
         }
 
         return response;

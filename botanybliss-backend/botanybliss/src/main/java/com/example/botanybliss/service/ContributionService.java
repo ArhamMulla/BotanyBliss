@@ -22,8 +22,7 @@ public class ContributionService {
     private final UserRepository userRepository;
     private final StorageService storageService;
 
-    @Value("${storage.base-url}")
-    private String imageBaseUrl;
+
 
     public ContributionService(
             PlantContributionRepository contributionRepository,
@@ -246,7 +245,7 @@ public class ContributionService {
         } else if (image.startsWith("http://") || image.startsWith("https://")) {
             response.setImageUrl(image);
         } else {
-            response.setImageUrl(imageBaseUrl + image);
+            response.setImageUrl(storageService.getUrl(image));
         }
 
         response.setAdminRemarks(contribution.getAdminRemarks());

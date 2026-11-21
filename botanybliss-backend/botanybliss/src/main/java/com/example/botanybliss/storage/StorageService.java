@@ -10,4 +10,6 @@ public interface StorageService {
     void delete(String fileName);
 
     Resource load(String fileName);
+
+    String getUrl(String fileName);
 }
