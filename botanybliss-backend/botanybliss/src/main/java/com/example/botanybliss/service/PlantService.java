@@ -41,7 +41,18 @@ public class PlantService {
     }
 
     public void deletePlant(Long id) {
-        plantRepository.deleteById(id);
+
+        Plant plant = plantRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Plant not found"));
+
+        String image = plant.getImageUrl();
+
+        if (image != null && !image.isBlank()
+                && !image.startsWith("http")) {
+            storageService.delete(image);
+        }
+
+        plantRepository.delete(plant);
     }
 
     public Plant createPlant(Plant plant, MultipartFile image) {

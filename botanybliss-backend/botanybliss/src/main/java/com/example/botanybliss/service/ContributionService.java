@@ -128,6 +128,7 @@ public class ContributionService {
                 .toList();
     }
 
+
     @Transactional
     public void approveContribution(Long contributionId, String adminRemarks) {
 
@@ -152,8 +153,19 @@ public class ContributionService {
                 throw new IllegalArgumentException("Plant not found for this contribution");
             }
 
+            String oldImage = plant.getImageUrl();
+            String newImage = contribution.getImageUrl();
+            System.out.println("Old image: " + oldImage);
+            System.out.println("New image: " + newImage);
             copyNonBlankContributionDetails(contribution, plant);
             plantRepository.save(plant);
+
+            if (hasText(newImage)
+                    && !newImage.equals(oldImage)
+                    && hasText(oldImage)
+                    && !oldImage.startsWith("http")) {
+                storageService.delete(oldImage);
+            }
         }
 
         contribution.setStatus(ContributionStatus.APPROVED);
@@ -171,6 +183,13 @@ public class ContributionService {
 
         if (contribution.getStatus() != ContributionStatus.PENDING) {
             throw new IllegalArgumentException("Contribution has already been reviewed");
+        }
+
+        String image = contribution.getImageUrl();
+
+        if (image != null && !image.isBlank()
+                && !image.startsWith("http")) {
+            storageService.delete(image);
         }
 
         contribution.setStatus(ContributionStatus.REJECTED);

@@ -26,8 +26,8 @@ import java.util.UUID;
 public class S3StorageImpl implements StorageService {
 
     private final S3Client s3Client;
-    private final S3Presigner s3Presigner;
     private final String bucketName;
+    private final String region;
 
     public S3StorageImpl(
             @Value("${aws.s3.bucket-name}") String bucketName,
@@ -41,11 +41,7 @@ public class S3StorageImpl implements StorageService {
                 .region(awsRegion)
                 .credentialsProvider(DefaultCredentialsProvider.create())
                 .build();
-
-        this.s3Presigner = S3Presigner.builder()
-                .region(awsRegion)
-                .credentialsProvider(DefaultCredentialsProvider.create())
-                .build();
+        this.region = region;
     }
 
     @Override
@@ -113,20 +109,8 @@ public class S3StorageImpl implements StorageService {
 
     @Override
     public String getUrl(String fileName) {
-
-        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-                .bucket(bucketName)
-                .key(fileName)
-                .build();
-
-        GetObjectPresignRequest presignRequest =
-                GetObjectPresignRequest.builder()
-                        .signatureDuration(Duration.ofMinutes(15))
-                        .getObjectRequest(getObjectRequest)
-                        .build();
-
-        return s3Presigner.presignGetObject(presignRequest)
-                .url()
-                .toString();
+        return "https://" + bucketName
+                + ".s3." + region
+                + ".amazonaws.com/" + fileName;
     }
 }
