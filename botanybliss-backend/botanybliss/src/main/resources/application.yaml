@@ -3,7 +3,7 @@ spring:
     name: botanybliss
 
   profiles:
-    active: s3
+    active: local
 
   datasource:
     url: ${DB_URL}

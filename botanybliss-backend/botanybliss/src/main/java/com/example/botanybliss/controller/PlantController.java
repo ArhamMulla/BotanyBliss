@@ -19,7 +19,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/plants")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = {
+        "http://localhost:5173",
+        "http://3.26.255.151"
+})
 public class PlantController {
 
     private final PlantService plantService;
